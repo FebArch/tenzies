@@ -1,12 +1,14 @@
 import react, { useEffect, useState, useRef } from "react"
+import { useWindowSize } from "react-use"
+import Confetti from "react-confetti"
 
 import Die from './components/die'
 import "./App.css"
 
 export default function App() {
 
+  const { width, height } = useWindowSize()
   let [randomNumArr, setRandomNumArr] = useState(generateRandNumForDies())
-  let [winGame, setWinGame] = useState(false)
 
   function generateRandNumForDies() {
     let newArr = []
@@ -30,7 +32,7 @@ export default function App() {
             value: Math.floor(Math.random() * 6) + 1,
           }
         }
-        return { ...d }
+        return d
       })
     })
   }
@@ -39,49 +41,55 @@ export default function App() {
     setRandomNumArr((prev) => {
       return prev.map((d) => {
         if (id === d.id) {
-          return { ...d, isDieRollable: false, value: d.value }
+          return { ...d, isDieRollable: false }
         }
-        return { ...d }
+        return d
       })
     })
   }
-  
+
   const allDies = randomNumArr.map((d, i) => {
     return <Die key={`${i}-${Date.now()}`} dieData={d} handleDieClick={handleDieClick} />
   })
 
-  useEffect(()=>{
-    let isAllDiesFreeze = allDies.every((e)=>{
-      return (e.props.dieData.isDieRollable === false) ? true : false
-    })
+  let isAllDiesFreeze = allDies.every((e) => {
+    return (e.props.dieData.isDieRollable === false)
+  })
 
-    let isAllDiesValueSame = allDies.every((e)=>{
-      return (e.props.dieData.value === allDies[0].props.dieData.value) ? true : false
-    })
 
-    if (isAllDiesFreeze && isAllDiesValueSame) {
-      setWinGame(true)
-    }
+  if (isAllDiesFreeze) {
 
-  }, [allDies])
 
-  function resetGame(){
-    setWinGame(false)
+  }
+
+  console.log(isAllDiesFreeze)
+
+  function resetGame() {
     setRandomNumArr(generateRandNumForDies())
   }
 
   return (
     <>
-    <h1>Tenzies</h1>
-    <p>Roll until all dies are same. Click each die  to freeze it at it's current value between dies</p>
+      <h1>Tenzies</h1>
+
+      {isAllDiesFreeze && <div>{
+        allDies.every((e) => e.props.dieData.value === allDies[0].props.dieData.value) ?
+          <h2>
+            <Confetti />
+            🎉 Congratulations! You won the game 🎉
+          </h2>
+        : <h2>😭 Game Over! Sorry you lost the game 😭</h2>
+      }</div>}
+
+      <p>Roll until all dies are same. Click each die  to freeze it at it's current value between dies</p>
       <div className="container">
         {allDies}
       </div>
 
-      {(winGame) ? 
-      <button onClick={resetGame}>New Game</button> : 
-      <button onClick={rollAllDies}>Roll</button>}
-      
+      {(isAllDiesFreeze) ?
+        <button onClick={resetGame}>New Game</button> :
+        <button onClick={rollAllDies}>Roll</button>}
+
     </>
   )
 }
