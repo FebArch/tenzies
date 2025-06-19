@@ -3,7 +3,7 @@ import { useWindowSize } from "react-use"
 import Confetti from "react-confetti"
 
 import Die from './components/die'
-import "./App.css"
+import "./tailwind.css"
 
 export default function App() {
 
@@ -69,8 +69,8 @@ export default function App() {
   }
 
   return (
-    <>
-      <h1>Tenzies</h1>
+    <div className="h-[60vh] w-[95vw] sm:w-[45vw] bg-cyan-900 px-4 border rounded text-teal-100 flex flex-col justify-evenly items-center">
+      <h1 className="text-4xl">Tenzies</h1>
 
       {isAllDiesFreeze && <div>{
         allDies.every((e) => e.props.dieData.value === allDies[0].props.dieData.value) ?
@@ -81,15 +81,15 @@ export default function App() {
         : <h2>😭 Game Over! Sorry you lost the game 😭</h2>
       }</div>}
 
-      <p>Roll until all dies are same. Click each die  to freeze it at it's current value between dies</p>
-      <div className="container">
+      <p className="text-center">Roll until all dies are same. Click each die  to freeze it at it's current value between dies</p>
+      <div className="w-85 h-40 cursor-pointer select-none rounded bg-teal-100 flex flex-wrap justify-evenly items-center border">
         {allDies}
       </div>
 
       {(isAllDiesFreeze) ?
-        <button onClick={resetGame}>New Game</button> :
-        <button onClick={rollAllDies}>Roll</button>}
+        <button className="border px-5 py-2 text-lg rounded active:bg-teal-100 active:text-teal-950 cursor-pointer md:hover:bg-teal-200 md:hover:text-teal-800" onClick={resetGame}>New Game</button> :
+        <button className="border px-5 py-2 text-lg rounded active:bg-teal-100 active:text-teal-950 cursor-pointer md:hover:bg-teal-200 md:hover:text-teal-800" onClick={rollAllDies}>Roll</button>}
 
-    </>
+    </div>
   )
 }
